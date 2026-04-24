@@ -221,17 +221,13 @@ class BasicRegister(AbstractRegister):
         """
         See `AbstractRegister.init`
         """
-        self.register = self._config.init_value
+        pass
 
     def update(self, data: bytes) -> int:
         """
         See `AbstractRegister.update`
         """
-        for byte in (Byte(b) for b in data):
-            if self._config.reverse_input:
-                byte = byte.reversed()
-            self._register = self._process_byte(byte)
-        return self.register
+        pass
 
     @abc.abstractmethod
     def _process_byte(self, byte: Byte) -> int:
@@ -250,22 +246,16 @@ class BasicRegister(AbstractRegister):
         """
         See `AbstractRegister.digest`
         """
-        value = self.reverse() if self._config.reverse_output else self.register
-        return value ^ self._config.final_xor_value
+        pass
 
     def reverse(self) -> int:
         """
         See `AbstractRegister.digest`
         """
-        index = 0
-        reversed_value = 0
-        for byte in reversed(self):
-            reversed_value += int(Byte(byte).reversed()) << index
-            index += 8
-        return reversed_value
+        pass
 
     def _is_division_possible(self) -> bool:
-        return (self.register & self._topbit) > 0
+        pass
 
     @property
     def register(self) -> int:
@@ -289,13 +279,7 @@ class Register(BasicRegister):
         """
         See BasicRegister._process_byte
         """
-        self.register ^= int(byte) << (self._config.width - 8)
-        for _ in byte:
-            if self._is_division_possible():
-                self.register = (self.register << 1) ^ self._config.polynomial
-            else:
-                self.register <<= 1
-        return self.register
+        pass
 
 
 class TableBasedRegister(BasicRegister):
@@ -329,9 +313,7 @@ class TableBasedRegister(BasicRegister):
         """
         See BasicRegister._process_byte
         """
-        index = int(byte) ^ (self.register >> (self._config.width - 8))
-        self.register = self._lookup_table[index] ^ (self.register << 8)
-        return self.register
+        pass
 
 
 @functools.lru_cache
@@ -346,15 +328,7 @@ def create_lookup_table(width: int, polynomial: int) -> list[int]:
     Returns:
         The lookup table for the specified width and polynomial.
     """
-    config = Configuration(width=width, polynomial=polynomial)
-    crc_register = Register(config)
-    lookup_table: list[int] = []
-    for index in range(256):
-        crc_register.init()
-        data = bytes(index.to_bytes(1, byteorder="big"))
-        crc_register.update(data)
-        lookup_table.append(crc_register.digest())
-    return lookup_table
+    pass
 
 
 class Calculator:
@@ -386,10 +360,7 @@ class Calculator:
         Returns:
             Checksum for the given input data.
         """
-        self._crc_register.init()
-        for chunk in _bytes_generator(data):
-            self._crc_register.update(chunk)
-        return self._crc_register.digest()
+        pass
 
     def verify(self, data: InputType, expected: int) -> bool:
         """
@@ -407,16 +378,7 @@ class Calculator:
 
 
 def _bytes_generator(data: InputType) -> Iterable[bytes]:
-    if isinstance(data, int):
-        yield data.to_bytes(1, "big")
-    elif isinstance(data, bytes):
-        yield data
-    elif isinstance(data, (bytearray, memoryview)):
-        yield bytes(data)
-    elif isinstance(data, (Iterable, BinaryIO)):
-        yield from (bytes(e) for e in data)
-    else:
-        raise TypeError(f"Unsupported parameter type: {type(data)}")
+    pass
 
 
 @enum.unique
@@ -648,38 +610,11 @@ class Crc64(enum.Enum):
 
 
 def _argument_parser() -> argparse.ArgumentParser:
-    into_int = functools.partial(int, base=0)
-    program = "crc"
-    description = "A set of crc checksum related command line tools."
-    parser = argparse.ArgumentParser(
-        prog=program,
-        description=description,
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-
-    subparsers = parser.add_subparsers()
-
-    table_command = subparsers.add_parser(
-        "table", help="Generates lookup tables for various crc algorithm settings"
-    )
-    table_command.add_argument(
-        "width",
-        metavar="<width>",
-        type=into_int,
-        help="width of the crc algorithm, common width's are 8, 16, 32, 64",
-    )
-    table_command.add_argument(
-        "polynomial",
-        metavar="<polynomial>",
-        type=into_int,
-        help="hex value of the polynomial used for calculating the crc table",
-    )
-    table_command.set_defaults(func=table)
-    return parser
+    pass
 
 
 def _generate_template(width: int) -> str:
-    return f"0x{{:0{(width + 3) // 4}X}}"
+    pass
 
 
 def table(args: argparse.Namespace) -> bool:
@@ -687,14 +622,7 @@ def table(args: argparse.Namespace) -> bool:
 
 
 def main(argv: list[str] | None = None) -> None:
-    parser = _argument_parser()
-    args = parser.parse_args(argv)
-    if "func" in args:
-        exit_code = 0 if args.func(args) else -1
-        sys.exit(exit_code)
-    else:
-        parser.print_help()
-        sys.exit(-1)
+    pass
 
 
 # Although there's a __main__.py to invoke main(), let's keep this in for users who
