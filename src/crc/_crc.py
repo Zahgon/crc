@@ -79,17 +79,14 @@ class Byte(numbers.Number):
 
     @property
     def value(self) -> int:
-        return self._value & Byte.BIT_MASK
+        pass
 
     @value.setter
     def value(self, value: int) -> None:
-        self._value = value & Byte.BIT_MASK
+        pass
 
     def reversed(self) -> Byte:
-        value = 0
-        for index, bit in enumerate(reversed(self)):
-            value += bit << index
-        return Byte(value)
+        pass
 
 
 class AbstractRegister(metaclass=abc.ABCMeta):
@@ -272,11 +269,11 @@ class BasicRegister(AbstractRegister):
 
     @property
     def register(self) -> int:
-        return self._register & self._bitmask
+        pass
 
     @register.setter
     def register(self, value: int) -> None:
-        self._register = value & self._bitmask
+        pass
 
 
 class Register(BasicRegister):
@@ -406,7 +403,7 @@ class Calculator:
             True if the expected checksum matches the actual checksum for the given
                 data, False otherwise.
         """
-        return self.checksum(data) == expected
+        pass
 
 
 def _bytes_generator(data: InputType) -> Iterable[bytes]:
@@ -686,16 +683,7 @@ def _generate_template(width: int) -> str:
 
 
 def table(args: argparse.Namespace) -> bool:
-    if not (args.width and args.polynomial):
-        return False
-    columns = 8
-    width = args.width
-    polynomial = args.polynomial
-    lookup_table = create_lookup_table(width, polynomial)
-    template = _generate_template(width)
-    rows = (lookup_table[i : i + columns] for i in range(0, len(lookup_table), columns))
-    print("\n".join(" ".join(template.format(value) for value in r) for r in rows))
-    return True
+    pass
 
 
 def main(argv: list[str] | None = None) -> None:
